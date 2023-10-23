@@ -7,16 +7,11 @@ st.set_page_config("Home", page_icon="🏠", initial_sidebar_state="collapsed")
 st.header("Welcome to News X")
 st.write("A news dashbaord for all your needs")
 
-col1, col2, col3 = st.columns(3)
+st.image("news-x.png", width=300, caption="news-x-logo")
 
-with col1:
-    st.write(" ")
-
-with col2:
-    st.image("news-x.png", width=300)
-
-with col3:
-    st.write(" ")
+st.write(
+    "NEWS-X is a user-friendly, Python-powered news dashboard that puts you in control of your news consumption. With a straightforward design and an array of features, this application allows you to read, manage, and visualize news effortlessly."
+)
 
 if st.button("Login", use_container_width=True, type="primary"):
     switch_page("login")
