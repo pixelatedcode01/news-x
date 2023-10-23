@@ -10,9 +10,10 @@ class UsernameAlreadyExists(Exception):
 class UserRegistration:
     """Class for user registration."""
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, country):
         self.username = username
         self.password = password
+        self.country = country
 
     def register_user(self):
         """Register a user."""
@@ -29,15 +30,17 @@ class UserRegistration:
                     raise UsernameAlreadyExists
                 else:
                     file = open(filename, "a+")
-                    file.write(f"{self.username}, {self.password}\n")
+                    file.write(f"{self.username}, {self.password}, {self.country}\n")
                     file.close()
                     st.session_state["uid"] = ""
                     st.session_state["passw"] = ""
+                    st.session_state["country"] = None
                     st.write("Registration Successful 👏")
             except UsernameAlreadyExists:
                 st.write("Try a different Username")
                 st.session_state["uid"] = ""
                 st.session_state["passw"] = ""
+                st.session_state["country"] = None
 
 
 class UserLogin:
@@ -58,15 +61,22 @@ class UserLogin:
         with open(filename, "r") as file:
             lines = file.read().splitlines()
 
-        for line in lines:
-            stored_username, stored_password = line.strip().split(", ")
-            if self.username == stored_username and self.password == stored_password:
-                st.write("Login Successful 🎉")
-                file = open(f"current.csv", "w+")
-                file.write(f"username,{self.username}\nlogin,{True}")
-                file.close()
-                return
-
-        st.write("Invalid username or password. Please try again.")
-        st.session_state["uid"] = ""
-        st.session_state["passw"] = ""
+            for line in lines:
+                stored_username, stored_password, stored_country = line.strip().split(
+                    ", "
+                )
+                if (
+                    self.username == stored_username
+                    and self.password == stored_password
+                ):
+                    st.write("Login Successful 🎉")
+                    file = open(f"current.csv", "w+")
+                    file.write(
+                        f"username,{self.username}\ncountry,{stored_country}\nlogin,{True}"
+                    )
+                    file.close()
+                    return True
+                else:
+                    st.write("Invalid username or password. Please try again.")
+                    # st.session_state["uid"] = ""
+                    # st.session_state["passw"] = ""

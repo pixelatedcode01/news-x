@@ -1,8 +1,10 @@
 import streamlit as st
-from news import News, Favorites
+from news import News, Favorites, LatestNews
+from weather import Weather
 import datetime as dt
 import pandas as pd
 from streamlit_extras.switch_page_button import switch_page
+import ISO_CODES
 import os
 
 st.set_page_config("Dashboard", page_icon="📃", initial_sidebar_state="collapsed")
@@ -35,10 +37,23 @@ if st.button("Logout"):
 
 st.write(f"# Welcome, {currentsession['username']}")
 
+weather = Weather(currentsession["country"])
+
+st.write("Today's Weather")
+current_weather = weather.get_current_weather()
+col1, col2, col3, col4 = st.columns(4)
+col1.image(f"icons/{current_weather['icon']}.svg", width=60)
+col2.metric("Temperature", f'{current_weather["temp"]}C')
+col3.metric("Wind", f'{current_weather["windspeed"]}mph')
+col4.metric("Humidity", current_weather["humidity"])
+
+
 news = News("news_csv.csv")
 userfav = Favorites()
 
-tab1, tab2, tab3 = st.tabs(["All News", "Favorites", "Visualizations"])
+tab0, tab1, tab2, tab3 = st.tabs(
+    ["Latest News", "All News", "Favorites", "Visualizations"]
+)
 
 
 # def add_to_fav():
@@ -59,6 +74,35 @@ tab1, tab2, tab3 = st.tabs(["All News", "Favorites", "Visualizations"])
 #             for item in currentsession["favs"]:
 #                 if "key" in item and item["key"] == key:
 #                     currentsession["favs"].remove(item)
+
+
+with tab0:
+    st.header("Catch the latest news from around the world")
+    st.write("Click refresh to get started")
+    country_select = st.selectbox(
+        "Country",
+        tuple(ISO_CODES.ISO_CODES.values()),
+        index=None,
+        placeholder="Select Country",
+        key="country_select",
+    )
+
+    if st.session_state.country_select is None:
+        country = currentsession["country"]
+    else:
+        country = st.session_state.country_select
+    if st.button("Refresh", type="primary", key="get"):
+        latest = LatestNews(country)
+        latest_articles = latest.get_latest()
+        for i in range(len(latest_articles)):
+            with st.expander(latest_articles["title"].iloc[i]):
+                try:
+                    st.image(latest_articles["urlToImage"].iloc[i])
+                except AttributeError:
+                    st.write("No Image to Display")
+                st.write(latest_articles["publishedAt"].iloc[i])
+                st.write(latest_articles["description"].iloc[i])
+                st.write(latest_articles["url"].iloc[i])
 
 
 with tab1:
@@ -85,6 +129,7 @@ with tab1:
                         articles["Excerpt"].iloc[i],
                     ]
                 )
+
                 # favs.append(
                 #     [
                 #         articles["Title"].iloc[i],

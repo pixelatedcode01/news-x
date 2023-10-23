@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import ISO_CODES
+import requests
 
 
 class News:
@@ -94,6 +96,23 @@ class News:
         ax.set_ylabel("Number of Articles")
         ax.set_title("Categories trends overtime")
         return fig
+
+
+class LatestNews(News):
+    """"""
+
+    def __init__(self, country):
+        for key, value in ISO_CODES.ISO_CODES.items():
+            if value == country:
+                country_code = key
+        url = f"https://newsapi.org/v2/top-headlines?country={country_code}&apiKey=cdcfbdb49fc34fe1824b72090a7d502d"
+        response = requests.get(url)
+        response_json = response.json()
+        self.news = pd.DataFrame(response_json["articles"])
+        self.news["publishedAt"] = pd.to_datetime(self.news["publishedAt"])
+
+    def get_latest(self):
+        return self.news
 
 
 class Favorites:

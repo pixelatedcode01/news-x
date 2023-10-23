@@ -15,8 +15,10 @@ login_password = st.text_input(
 #     type="primary",
 # )
 if st.button("Log In", type="primary"):
-    UserLogin(login_username, login_password).login_user()
-    switch_page("dashboard")
+    if UserLogin(login_username, login_password).login_user():
+        switch_page("dashboard")
+    else:
+        st.write("Check your username and password.")
 
 st.write("New User?")
 if st.button("Sign Up"):

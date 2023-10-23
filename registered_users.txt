@@ -1,2 +1,3 @@
-naman, rastogi
-dia, ochani
+naman, rastogi, United States
+dia, ochani, India
+aman, rastogi, India
