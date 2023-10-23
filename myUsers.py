@@ -3,6 +3,7 @@ import os
 from streamlit_extras.switch_page_button import switch_page
 
 
+# Custom exception to handle cases where the username already exists during registration
 class UsernameAlreadyExists(Exception):
     pass
 
@@ -18,6 +19,8 @@ class UserRegistration:
     def register_user(self):
         """Register a user."""
         filename = "registered_users.txt"
+
+        # Check if the file exists, and create it if it doesn't
         if not os.path.exists(filename):
             file = open(filename, "x")
         else:
@@ -25,10 +28,13 @@ class UserRegistration:
             lines = file.readlines()
             file.close()
             usernames = [line.split(",")[0] for line in lines]
+
             try:
+                # Check if the username already exists; if so, raise an exception
                 if self.username in usernames:
                     raise UsernameAlreadyExists
                 else:
+                    # If the username is unique, append the user information to the file
                     file = open(filename, "a+")
                     file.write(f"{self.username}, {self.password}, {self.country}\n")
                     file.close()
@@ -54,6 +60,8 @@ class UserLogin:
         """Login the user if correct information is provided."""
 
         filename = "registered_users.txt"
+
+        # Check if the registered users file exists
         if not os.path.exists(filename):
             st.write("No registered users found. Please sign up first.")
             return
@@ -62,13 +70,16 @@ class UserLogin:
             lines = file.read().splitlines()
 
             for line in lines:
+                # Split the line into stored username, stored password, and stored country
                 stored_username, stored_password, stored_country = line.strip().split(
                     ", "
                 )
+
                 if (
                     self.username == stored_username
                     and self.password == stored_password
                 ):
+                    # If the username and password match, log in the user and create a session
                     st.write("Login Successful 🎉")
                     file = open(f"current.csv", "w+")
                     file.write(
@@ -78,5 +89,3 @@ class UserLogin:
                     return True
                 else:
                     st.write("Invalid username or password. Please try again.")
-                    # st.session_state["uid"] = ""
-                    # st.session_state["passw"] = ""

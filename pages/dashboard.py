@@ -8,8 +8,10 @@ import ISO_CODES
 import os
 
 try:
+    # Configure the Streamlit page settings for the "Dashboard" page
     st.set_page_config("Dashboard", page_icon="📃", initial_sidebar_state="collapsed")
 
+    # Read user session data from "current.csv"
     file = open(f"current.csv", "r+")
     data = file.read().splitlines()
     file.close()
@@ -19,6 +21,7 @@ try:
         if key not in currentsession:
             currentsession[key] = value
 
+    # Customize the appearance of the Streamlit sidebar
     st.markdown(
         """
     <style>
@@ -29,16 +32,17 @@ try:
     """,
         unsafe_allow_html=True,
     )
-    # value = st.session_state["uid"]
 
+    # Log out the user and remove the session data when the "Logout" button is clicked
     if st.button("Logout"):
         os.remove("current.csv")
         switch_page("home")
 
+    # Display a welcome message to the logged-in user
     st.write(f"# Welcome, {currentsession['username']}")
 
+    # Retrieve current weather information and display it on the dashboard
     weather = Weather(currentsession["country"])
-
     st.write("Today's Weather")
     current_weather = weather.get_current_weather()
     col1, col2, col3, col4 = st.columns(4)
@@ -49,31 +53,13 @@ try:
 
     news = News("news_csv.csv")
     userfav = Favorites()
-
+    # Create tabs for different sections of the dashboard
     tab0, tab1, tab2, tab3 = st.tabs(
         ["Latest News", "All News", "Favorites", "Visualizations"]
     )
 
-    # def add_to_fav():
-    #     currentsession["favs"] = []
-    #     for key, value in st.session_state.items():
-    #         if value == True:
-    #             article = {
-    #                 "key": key,
-    #                 "title": articles["Title"].iloc[int(key)],
-    #                 "date": articles["Date"].iloc[int(key)],
-    #                 "content": articles["Excerpt"].iloc[int(key)],
-    #             }
-    #             if "favs" not in currentsession:
-    #                 currentsession["favs"] = [key]
-    #             else:
-    #                 currentsession["favs"].append(article)
-    #         elif value == False:
-    #             for item in currentsession["favs"]:
-    #                 if "key" in item and item["key"] == key:
-    #                     currentsession["favs"].remove(item)
-
     with tab0:
+        # Display the latest news from around the world
         st.header("Catch the latest news from around the world")
         st.write("Click refresh to get started")
         country_select = st.selectbox(
@@ -102,6 +88,7 @@ try:
                     st.write(latest_articles["url"].iloc[i])
 
     with tab1:
+        # Display all news articles and allow users to select categories and the number of articles
         st.header("All news")
         cat_choice = st.multiselect(
             "Select Categories", news.get_categories(), key="cat"
@@ -128,16 +115,7 @@ try:
                         ]
                     )
 
-                    # favs.append(
-                    #     [
-                    #         articles["Title"].iloc[i],
-                    #         articles["Date"].iloc[i],
-                    #         articles["Excerpt"].iloc[i],
-                    #     ]
-                    # )
-
-    print(userfav.get_favorites())
-
+    # Display the list of user favorites in the "Favorites" tab
     with tab2:
         favorite_articles = userfav.get_favorites()
         st.header("Favorites")
@@ -146,6 +124,7 @@ try:
                 st.write(item[1])
                 st.write(item[2])
 
+    # Provide options for visualizing news data in the "Visualizations" tab
     with tab3:
         st.header("Visualizations")
         st.date_input(
@@ -187,9 +166,7 @@ try:
                 )
             )
         elif st.session_state.type == "Line":
-            """ """
             st.pyplot(news.trends(cateogories=st.session_state["plotcat"]))
-
         else:
             st.write("# Please enter correct dates.")
 

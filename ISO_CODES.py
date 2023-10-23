@@ -250,12 +250,16 @@ iso_3166_1 = {
     "ZW": "Zimbabwe",
 }
 
-# All the ISO Codes allowed by API
+# List of ISO 3166-1 country codes allowed by the API
 country_codes_str = "ae ar at au be bg br ca ch cn co cu cz de eg fr gb gr hk hu id ie il in it jp kr lt lv ma mx my ng nl no nz ph pl pt ro rs ru sa se sg si sk th tr tw ua us ve za"
 country_codes_list = country_codes_str.split()
 
+# Create a dictionary named ISO_CODES to store ISO country codes and their names
 ISO_CODES = {}
 
+# Iterate through the ISO 3166-1 country code dictionary
 for key, value in iso_3166_1.items():
+    # Check if the lowercase version of the ISO code is in the allowed list
     if key.lower() in country_codes_list:
+        # Add the ISO code and country name to the ISO_CODES dictionary
         ISO_CODES[key] = value
