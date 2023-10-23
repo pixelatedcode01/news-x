@@ -6,7 +6,7 @@ class Weather:
     """ """
 
     def __init__(self, country):
-        url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{country.replace(' ', '')}?unitGroup=metric&include=current&key=ZFRQGEWFMT86RPVYMWC6APD7T&contentType=json"
+        url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{country}?unitGroup=metric&include=current&key=ZFRQGEWFMT86RPVYMWC6APD7T&contentType=json"
         response = requests.get(url)
         weather_json = response.json()
         weather = weather_json["days"]

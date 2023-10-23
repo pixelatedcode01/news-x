@@ -43,9 +43,9 @@ st.write("Today's Weather")
 current_weather = weather.get_current_weather()
 col1, col2, col3, col4 = st.columns(4)
 col1.image(f"icons/{current_weather['icon']}.svg", width=60)
-col2.metric("Temperature", f'{current_weather["temp"]}C')
+col2.metric("Temperature", f'{current_weather["temp"]}°C')
 col3.metric("Wind", f'{current_weather["windspeed"]}mph')
-col4.metric("Humidity", current_weather["humidity"])
+col4.metric("Humidity", f'{current_weather["humidity"]}%')
 
 
 news = News("news_csv.csv")
@@ -83,7 +83,7 @@ with tab0:
         "Country",
         tuple(ISO_CODES.ISO_CODES.values()),
         index=None,
-        placeholder="Select Country",
+        placeholder=currentsession["country"],
         key="country_select",
     )
 
